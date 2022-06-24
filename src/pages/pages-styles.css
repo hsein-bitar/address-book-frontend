@@ -22,7 +22,8 @@
     margin-left: 60px;
     margin-top: 40px;
     padding: 16px;
-    border-radius: 20px;
+    padding-bottom: 16px;
+    border-radius: 30px;
     background-color: darkgray;
     height: calc(80vh);
     width: 400px;
@@ -47,7 +48,6 @@
 
 
 .gallery {
-    margin-top: 10px;
     height: 100%;
     /* max-width: 100vw; */
     /* overflow-x: hidden;
@@ -116,3 +116,18 @@
 
 
 /* end gallery styling */
+
+
+/* start map container styling */
+.map {
+    z-index: -9;
+    position: absolute;
+    height: calc(100vh - 80px);
+    width: 100vw;
+    top: 0;
+    left: 0;
+    /* width: 100vw;
+    height: 100vh; */
+}
+
+/* end map container styling */

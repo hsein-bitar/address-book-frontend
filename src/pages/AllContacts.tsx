@@ -8,6 +8,57 @@ import Message from '../components/Message'
 import useStore from '../Store';
 
 
+
+// maps api and styles
+import mapStyles from '../assets/mapStyles'
+import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
+
+const containerStyle = {
+    width: '100vw',
+    height: '100vh'
+};
+
+const center = {
+    lat: -3.745,
+    lng: -38.523
+};
+
+function MyComponent() {
+    const { isLoaded } = useJsApiLoader({
+        id: 'google-map-script',
+        googleMapsApiKey: "AIzaSyCZ4ItuDplIQWID2EVNY4n_YtY3c5nbua0"
+    })
+
+    const [map, setMap] = React.useState(null)
+
+    const onLoad = React.useCallback(function callback(map: any) {
+        const bounds = new window.google.maps.LatLngBounds(center);
+        map.fitBounds(bounds);
+        setMap(map)
+    }, [])
+
+    const onUnmount = React.useCallback(function callback(map: any) {
+        setMap(null)
+    }, [])
+
+    return isLoaded ? (
+        <div className="maps">
+            <GoogleMap
+                mapContainerClassName='map'
+                // mapContainerStyle={containerStyle}
+                center={center}
+                zoom={10}
+                onLoad={onLoad}
+                onUnmount={onUnmount}
+            >
+                { /* Child components, such as markers, info windows, etc. */}
+                <></>
+            </GoogleMap>
+        </div>
+    ) : <></>
+}
+
+
 const AllContacts = () => {
     let navigate = useNavigate();
     let [message, setMessage] = useState({ message: "", theme: 0 });
@@ -66,6 +117,7 @@ const AllContacts = () => {
 
     return (
         <>
+            <MyComponent />
             <div className="contacts-container">
                 <div className="gallery">
                     <Message {...message} />
