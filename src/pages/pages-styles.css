@@ -2,3 +2,17 @@
     margin: 0 auto;
     transform: translateY(-50%);
 }
+
+.active {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+.user-active:hover {
+    filter: sepia(79%) saturate(200%) hue-rotate(333deg) brightness(118%) contrast(119%);
+}
+
+.user-active {
+    cursor: pointer;
+    filter: sepia(79%) saturate(200%) hue-rotate(86deg) brightness(118%) contrast(119%);
+}

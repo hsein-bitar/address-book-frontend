@@ -1,19 +1,29 @@
 import React from 'react';
-import create from 'zustand'
-import { persist } from "zustand/middleware"
+import create, { StateCreator } from 'zustand'
+import { persist, PersistOptions } from "zustand/middleware"
 
 type State = {
     userToken: string;
     setUserToken: Function
 }
 
+type MyPersist = (
+    config: StateCreator<State>,
+    options: PersistOptions<State>
+) => StateCreator<State>
+
 
 // state store
-const useStore = create<State>((set) => ({
-    userToken: '',
-    setUserToken: (token: string) => set({ userToken: token }),
-}))
-
+const useStore = create<State>(
+    (persist as unknown as MyPersist)(
+        (set, get) => ({
+            userToken: '',
+            setUserToken: (token: string) => set((state) => ({ userToken: token })),
+        }),
+        { name: 'addressbook' }
+    )
+)
 
 
 export default useStore;
+

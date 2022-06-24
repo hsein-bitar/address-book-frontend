@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { Routes, Route, NavLink, useNavigate, useLocation } from 'react-router-dom';
 
-import useStore from './Store';
 
 
 // brand and user icon imports
@@ -19,28 +18,38 @@ import Contact from './pages/Contact';
 import AllContacts from './pages/AllContacts';
 
 
+import useStore from './Store';
 // App functional component start
 function App() {
-  const userToken = useStore(state => state.userToken)
-  const resetToken = useStore((state) => state.setUserToken(''))
-
   let navigate = useNavigate();
-  let location = useLocation().pathname.slice(1);
+
+  // zustand state store
+  const userToken = useStore(state => state.userToken)
+  const setUserToken = useStore((state) => state.setUserToken)
+
+
+  // let location = useLocation().pathname.slice(1);
 
 
   // removes token from state and localStorage
   const logout = () => {
-    resetToken();
-    localStorage.removeItem('user_token');
+    setUserToken('');
     return navigate("/login");
   }
+
+  // useEffect(() => {
+
+  // }, [])
 
 
   return (
     <div className="App">
       <header className="App-header">
-        <NavLink to="/">
-          <img src={logo} className="App-logo" alt="logo" />
+        <NavLink to={userToken ? "/allcontacts" : "/login"}>
+          <div className="App-logo">
+            <img src={logo} className="App-logo" alt="logo" />
+            <h1>address</h1>
+          </div>
         </NavLink>
 
         <div className="App-header-right">
@@ -54,12 +63,11 @@ function App() {
         </div>
       </header>
 
-      {/* render all components inside this */}
       <div className="container">
         <Routes>
           {<Route path="/register" element={<Register />} />}
           {<Route path="/login" element={<Login />} />}
-          {<Route path="/" element={userToken ? <Login /> : <AllContacts />} />}
+          {<Route path="/" element={userToken ? <AllContacts /> : <Login />} />}
           {<Route path="/contact/:id" element={<Contact />} />}
           {<Route path="/allcontacts" element={<AllContacts />} />}
           {<Route path="*" element={<NotFound />} />}
