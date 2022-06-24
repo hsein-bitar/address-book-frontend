@@ -69,20 +69,22 @@ const Register: FC = (): ReactElement => {
 
     return (
         <>
-            <Message {...message} />
-            <form id="register-form" name="register-form" action="" noValidate>
-                <label htmlFor="first-name">Enter your first name:</label>
-                <input type="text" id="register-first-name" required />
-                <label htmlFor="last-name">Enter your last name:</label>
-                <input type="text" id="register-last-name" required />
-                <label htmlFor="email">Enter your email:</label>
-                <input type="email" id="register-email" required />
-                <label htmlFor="password">Password</label>
-                <input type="password" id="register-password" name="password" required />
-                <div className='button'>
-                    <button onClick={() => register()} id="register-submit" className="primary" type="button"> Register</button>
-                </div>
-            </form>
+            <div className="container">
+                <Message {...message} />
+                <form id="register-form" name="register-form" action="" noValidate>
+                    <label htmlFor="first-name">Enter your first name:</label>
+                    <input type="text" id="register-first-name" required />
+                    <label htmlFor="last-name">Enter your last name:</label>
+                    <input type="text" id="register-last-name" required />
+                    <label htmlFor="email">Enter your email:</label>
+                    <input type="email" id="register-email" required />
+                    <label htmlFor="password">Password</label>
+                    <input type="password" id="register-password" name="password" required />
+                    <div className='button'>
+                        <button onClick={() => register()} id="register-submit" className="primary" type="button"> Register</button>
+                    </div>
+                </form>
+            </div>
         </>
     )
 }

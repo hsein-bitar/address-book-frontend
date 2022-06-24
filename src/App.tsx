@@ -29,7 +29,12 @@ function App() {
 
 
   // let location = useLocation().pathname.slice(1);
-
+  let first_name;
+  try {
+    if (userToken) first_name = JSON.parse(window.atob(userToken.split('.')[1])).first_name
+  } catch (error) {
+    console.log(error);
+  }
 
   // removes token from state and localStorage
   const logout = () => {
@@ -48,7 +53,7 @@ function App() {
         <NavLink to={userToken ? "/allcontacts" : "/login"}>
           <div className="App-logo">
             <img src={logo} className="App-logo" alt="logo" />
-            <h1>address</h1>
+            <h4>address</h4>
           </div>
         </NavLink>
 
@@ -56,6 +61,7 @@ function App() {
           {!userToken && <NavLink to="/register">Register</NavLink>}
           {!userToken && <NavLink to="/login">Login</NavLink>}
           {userToken && <NavLink to="/allcontacts">My Contacts</NavLink>}
+          {userToken && <h4>Welcome! {first_name}</h4>}
           {/* {!userToken && <NavLink className={`${location === 'register' ? 'active' : ''}`} to="/register">Register</NavLink>}
           {!userToken && <NavLink className={`${location === 'login' ? 'active' : ''}`} to="/login">Login</NavLink>}
           {userToken && <NavLink className={`${location === 'create' ? 'active' : ''}`} to="/allcontacts">My Contacts</NavLink>} */}
@@ -63,16 +69,14 @@ function App() {
         </div>
       </header>
 
-      <div className="container">
-        <Routes>
-          {<Route path="/register" element={<Register />} />}
-          {<Route path="/login" element={<Login />} />}
-          {<Route path="/" element={userToken ? <AllContacts /> : <Login />} />}
-          {<Route path="/contact/:id" element={<Contact />} />}
-          {<Route path="/allcontacts" element={<AllContacts />} />}
-          {<Route path="*" element={<NotFound />} />}
-        </Routes>
-      </div>
+      <Routes>
+        {<Route path="/register" element={<Register />} />}
+        {<Route path="/login" element={<Login />} />}
+        {<Route path="/" element={userToken ? <AllContacts /> : <Login />} />}
+        {<Route path="/contact/:id" element={<Contact />} />}
+        {<Route path="/allcontacts" element={<AllContacts />} />}
+        {<Route path="*" element={<NotFound />} />}
+      </Routes>
     </div >
   );
 }

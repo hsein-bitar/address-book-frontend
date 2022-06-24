@@ -3,7 +3,11 @@ import "./pages-styles.css"
 
 const Contact = () => {
     return (
-        <div>contact</div>
+        <div className="container">
+
+            <div>contact</div>
+
+        </div>
     )
 }
 

@@ -69,8 +69,8 @@ const Login = () => {
 
     return (
         <>
-            <Message {...message} />
-            {!userToken ?
+            <div className="container">
+                <Message {...message} />
                 <form id="login-form" name="login-form" action="" noValidate>
                     <label htmlFor="email">Enter your email:</label>
                     <input type="email" id="login-email" required />
@@ -80,7 +80,7 @@ const Login = () => {
                         <button onClick={() => login()} id="login-submit" className="primary" type="button"> Login</button>
                     </div>
                 </form>
-                : <></>}
+            </div>
         </>
     )
 }
