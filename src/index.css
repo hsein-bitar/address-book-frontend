@@ -74,3 +74,17 @@ html {
   flex-direction: column;
   letter-spacing: 0.1rem;
 }
+
+/* start styling react icons globally */
+
+.react-icons {
+  font-size: 1.6rem;
+  vertical-align: middle;
+  fill: var(--dark);
+}
+
+.react-icons:hover {
+  fill: red;
+}
+
+/* end styling react icons */

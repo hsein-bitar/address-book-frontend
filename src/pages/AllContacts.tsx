@@ -4,66 +4,44 @@ import "./pages-styles.css"
 
 import Message from '../components/Message'
 
+// icons
+import { RiDeleteBin2Line, RiEditLine } from "react-icons/ri";
+
 // zustand state store
 import useStore from '../Store';
 
 
+// map component
+import { MapDisplay } from '../components/MapDisplay';
 
-// maps api and styles
-import mapStyles from '../assets/mapStyles'
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
-const containerStyle = {
-    width: '100vw',
-    height: '100vh'
-};
+import Contact from './Contact';
 
-const center = {
-    lat: -3.745,
-    lng: -38.523
-};
 
-function MyComponent() {
-    const { isLoaded } = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: "AIzaSyCZ4ItuDplIQWID2EVNY4n_YtY3c5nbua0"
-    })
+// const center = {
+//     lat: 33.8938,
+//     lng: 35.5018
+// }
 
-    const [map, setMap] = React.useState(null)
 
-    const onLoad = React.useCallback(function callback(map: any) {
-        const bounds = new window.google.maps.LatLngBounds(center);
-        map.fitBounds(bounds);
-        setMap(map)
-    }, [])
-
-    const onUnmount = React.useCallback(function callback(map: any) {
-        setMap(null)
-    }, [])
-
-    return isLoaded ? (
-        <div className="maps">
-            <GoogleMap
-                mapContainerClassName='map'
-                // mapContainerStyle={containerStyle}
-                center={center}
-                zoom={10}
-                onLoad={onLoad}
-                onUnmount={onUnmount}
-                options={{ styles: mapStyles, disableDefaultUI: true, mapTypeControl: false, zoomControl: true }}
-            >
-                { /* Child components, such as markers, info windows, etc. */}
-                <></>
-            </GoogleMap>
-        </div>
-    ) : <></>
+const deleteContact = (contact_id: string) => {
+    console.log("deleted id:", contact_id);
 }
-
+const editContact = (contact_id: string) => {
+    console.log("editing id:", contact_id);
+}
 
 const AllContacts = () => {
     let navigate = useNavigate();
     let [message, setMessage] = useState({ message: "", theme: 0 });
+
+    // local contacts state
     let [contacts, setContacts] = useState([]);
+    let [currentContact, setCurrentContact] = useState([]);
+    const [center, setCenter] = useState({
+        lat: 33.8938,
+        lng: 35.5018
+    })
 
     // zustand state store
     const userToken = useStore(state => state.userToken)
@@ -118,56 +96,31 @@ const AllContacts = () => {
 
     return (
         <>
-            <MyComponent />
+            <MapDisplay passed_contacts={contacts} center={center} setCenter={setCenter} />
+            <Message {...message} />
             <div className="contacts-container">
                 <div className="gallery">
-                    <Message {...message} />
                     {/* TODO display map, grid, and add links on the mapped contacts */}
                     {contacts.map((contact: any) => (<>
-                        <div className="item">
-                            <h3>
+                        <div key={contact._id} onClick={() => setCenter({ lat: contact.location.coordinates[0], lng: contact.location.coordinates[1] })} className="item">
+                            <div className="icons-wrapper">
+                                {<RiDeleteBin2Line onClick={() => deleteContact(contact._id)} />}
+                                {<RiEditLine onClick={() => editContact(contact._id)} />}
+                            </div>
+                            <h3 className="contact-name">
                                 {contact.first_name}
                             </h3>
-                            {contact.phone}
-                            {contact.email}
-                            {contact.last_name}
-                            {contact.relation}
-                        </div>
-                        <div className="item">
-                            <h3>
-                                {contact.first_name}
-                            </h3>
-                            {contact.phone}
-                            {contact.email}
-                            {contact.last_name}
-                            {contact.relation}
-                        </div>
-                        <div className="item">
-                            <h3>
-                                {contact.first_name}
-                            </h3>
-                            {contact.phone}
-                            {contact.email}
-                            {contact.last_name}
-                            {contact.relation}
-                        </div>
-                        <div className="item">
-                            <h3>
-                                {contact.first_name}
-                            </h3>
-                            {contact.phone}
-                            {contact.email}
-                            {contact.last_name}
-                            {contact.relation}
-                        </div>
-                        <div className="item">
-                            <h3>
-                                {contact.first_name}
-                            </h3>
-                            {contact.phone}
-                            {contact.email}
-                            {contact.last_name}
-                            {contact.relation}
+                            <div className="contact-details">
+                                <p>
+                                    {contact.relation}
+                                </p>
+                                <p>
+                                    {contact.phone}
+                                </p>
+                                <p>
+                                    {contact.email}
+                                </p>
+                            </div>
                         </div>
                     </>
                     ))}
