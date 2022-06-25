@@ -5,10 +5,8 @@ import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
 
 export const MapDisplay = ({ passed_contacts, center, setCenter }: any) => {
-    // const [markerContacts, setMarkerContacts] = useState([]);
 
 
-    console.log(center)
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: "AIzaSyCZ4ItuDplIQWID2EVNY4n_YtY3c5nbua0"
@@ -19,12 +17,15 @@ export const MapDisplay = ({ passed_contacts, center, setCenter }: any) => {
         const bounds = new window.google.maps.LatLngBounds(center);
         map.fitBounds(bounds);
         setMap(map)
-        // setMarkerContacts(passed_contacts);
     }, [])
 
     const onUnmount = React.useCallback(function callback(map: any) {
         setMap(null)
     }, [])
+
+    // useEffect(() => {
+    //     setCenter({ lat: passed_contacts[0].location.coordinates[0], lng: passed_contacts[0].location.coordinates[1] })
+    // }, [])
 
     return isLoaded ? (
         <div className="maps">

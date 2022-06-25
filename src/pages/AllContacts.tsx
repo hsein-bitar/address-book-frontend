@@ -31,21 +31,28 @@ const editContact = (contact_id: string) => {
     console.log("editing id:", contact_id);
 }
 
+
 const AllContacts = () => {
     let navigate = useNavigate();
     let [message, setMessage] = useState({ message: "", theme: 0 });
-
-    // local contacts state
-    let [contacts, setContacts] = useState([]);
-    let [currentContact, setCurrentContact] = useState([]);
-    const [center, setCenter] = useState({
-        lat: 33.8938,
-        lng: 35.5018
-    })
-
     // zustand state store
     const userToken = useStore(state => state.userToken)
     const setUserToken = useStore(state => state.setUserToken)
+
+    // local contacts state
+    let [contacts, setContacts]: [any, Function] = useState([]);
+    let [search, setSearch] = useState('');
+    let [category, setCategory] = useState('Any');
+    let [categoryList, setCategoryList] = useState(new Set());
+    let [currentContact, setCurrentContact] = useState([]);
+
+    const [center, setCenter] = useState({
+        lat: 33.90153392218487,
+        lng: 35.44648839948142
+    })
+
+
+
 
     const populateContacts = async () => {
         try {
@@ -65,7 +72,10 @@ const AllContacts = () => {
                 setTimeout(() => {
                     setMessage({ message: "", theme: 0 })
                 }, 1500);
-                setContacts(result)
+                setContacts(result);
+                result.forEach((element: any) => {
+                    setCategoryList(list => new Set([...list, element.relation]))
+                });
             } else {
                 setMessage({ message: 'You need to login', theme: 1 })
                 setTimeout(() => {
@@ -85,6 +95,25 @@ const AllContacts = () => {
         }
     }
 
+    // render filtered contacts to DOM function
+    let filterContacts = (contacts: [], search: string, category: string) => {
+        let displayed_contacts: any = contacts;
+        if (category && category !== 'Any') {
+            displayed_contacts = displayed_contacts.filter((contact: any) => contact.relation === category);
+        }
+        if (search) {
+            const regex = new RegExp(search, 'gi');
+            displayed_contacts = displayed_contacts.filter((contact: any) => contact.first_name.match(regex) || contact.last_name.match(regex) || contact.email.match(regex) || contact.phone.match(regex));
+        }
+        setTimeout(() => {
+            setCenter({ lat: displayedContacts[0].location.coordinates[0], lng: displayedContacts[0].location.coordinates[1] })
+        }, 400)
+        return displayed_contacts;
+    }
+
+    let displayedContacts = filterContacts(contacts, search, category)
+    // let defaultCenter = { lat: displayedContacts[0].location.coordinates[0], lng: displayedContacts[0].location.coordinates[1] }
+
     useEffect(() => {
         if (!userToken) {
             return navigate("/login");
@@ -96,30 +125,29 @@ const AllContacts = () => {
 
     return (
         <>
-            <MapDisplay passed_contacts={contacts} center={center} setCenter={setCenter} />
+            <MapDisplay passed_contacts={displayedContacts} center={center} setCenter={setCenter} />
             <Message {...message} />
             <div className="contacts-container">
+                <input type="text" name="search" id="search" onChange={(e) => setSearch(e.target.value)} />
+                <select name="category" id="category" onChange={(e) => setCategory(e.target.value)}>
+                    <option>Any</option>
+                    {[...categoryList].map((category: any) => <option>{category}</option>)}
+                </select>
                 <div className="gallery">
                     {/* TODO display map, grid, and add links on the mapped contacts */}
-                    {contacts.map((contact: any) => (<>
-                        <div key={contact._id} onClick={() => setCenter({ lat: contact.location.coordinates[0], lng: contact.location.coordinates[1] })} className="item">
+                    {displayedContacts.map((contact: any) => (<>
+                        <div key={contact._id} className="item">
                             <div className="icons-wrapper">
                                 {<RiDeleteBin2Line onClick={() => deleteContact(contact._id)} />}
                                 {<RiEditLine onClick={() => editContact(contact._id)} />}
                             </div>
-                            <h3 className="contact-name">
+                            <h3 onClick={() => setCenter({ lat: contact.location.coordinates[0], lng: contact.location.coordinates[1] })} className="contact-name">
                                 {contact.first_name}
                             </h3>
                             <div className="contact-details">
-                                <p>
-                                    {contact.relation}
-                                </p>
-                                <p>
-                                    {contact.phone}
-                                </p>
-                                <p>
-                                    {contact.email}
-                                </p>
+                                <p>{contact.relation}</p>
+                                <p>{contact.phone}</p>
+                                <p>{contact.email}</p>
                             </div>
                         </div>
                     </>
