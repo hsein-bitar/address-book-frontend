@@ -15,7 +15,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 
 import Contact from './pages/Contact';
-import AllContacts from './pages/AllContacts';
+import AllContacts from './pages/MyContacts';
 
 
 import useStore from './Store';
@@ -41,10 +41,6 @@ function App() {
     setUserToken('');
     return navigate("/login");
   }
-
-  // useEffect(() => {
-
-  // }, [])
 
 
   return (

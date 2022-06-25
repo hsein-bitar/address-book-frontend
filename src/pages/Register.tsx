@@ -24,7 +24,6 @@ const Register: FC = (): ReactElement => {
 
 
     const register = async () => {
-
         try {
             let user = {
                 first_name: (document.getElementById('register-first-name') as HTMLInputElement).value,

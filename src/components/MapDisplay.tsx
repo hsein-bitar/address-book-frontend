@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
+
 // maps api and styles
 import mapStyles from '../assets/mapStyles'
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
@@ -23,10 +24,6 @@ export const MapDisplay = ({ passed_contacts, center, setCenter }: any) => {
         setMap(null)
     }, [])
 
-    // useEffect(() => {
-    //     setCenter({ lat: passed_contacts[0].location.coordinates[0], lng: passed_contacts[0].location.coordinates[1] })
-    // }, [])
-
     return isLoaded ? (
         <div className="maps">
             <GoogleMap
@@ -40,7 +37,6 @@ export const MapDisplay = ({ passed_contacts, center, setCenter }: any) => {
                     console.log(e.latLng?.lat(), e.latLng?.lng())
                 }}
             >
-                { /* Child components, such as markers, info windows, etc. */}
                 <>
                     {passed_contacts.map((contact: any) => {
                         console.log(contact);
@@ -50,9 +46,6 @@ export const MapDisplay = ({ passed_contacts, center, setCenter }: any) => {
                             title={contact.first_name}
                             key={`marker${contact._id}`}
                             position={{ lat: contact.location.coordinates[0], lng: contact.location.coordinates[1] }}
-                        // onClick={() => {
-                        //     setCenter();
-                        // }}
                         // icon={{
                         //     url: `/skateboarding.svg`,
                         //     scaledSize: new window.google.maps.Size(25, 25)
