@@ -53,7 +53,6 @@ function App() {
         <NavLink to={userToken ? "/allcontacts" : "/login"}>
           <div className="App-logo">
             <img src={logo} className="App-logo" alt="logo" />
-            <h4>address</h4>
           </div>
         </NavLink>
 
@@ -61,7 +60,7 @@ function App() {
           {!userToken && <NavLink to="/register">Register</NavLink>}
           {!userToken && <NavLink to="/login">Login</NavLink>}
           {userToken && <NavLink to="/allcontacts">My Contacts</NavLink>}
-          {userToken && <h4>Welcome! {first_name}</h4>}
+          {userToken && <h5>Welcome! <br /> {first_name}</h5>}
           {/* {!userToken && <NavLink className={`${location === 'register' ? 'active' : ''}`} to="/register">Register</NavLink>}
           {!userToken && <NavLink className={`${location === 'login' ? 'active' : ''}`} to="/login">Login</NavLink>}
           {userToken && <NavLink className={`${location === 'create' ? 'active' : ''}`} to="/allcontacts">My Contacts</NavLink>} */}

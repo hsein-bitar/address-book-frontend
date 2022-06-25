@@ -50,6 +50,7 @@ function MyComponent() {
                 zoom={10}
                 onLoad={onLoad}
                 onUnmount={onUnmount}
+                options={{ styles: mapStyles, disableDefaultUI: true, mapTypeControl: false, zoomControl: true }}
             >
                 { /* Child components, such as markers, info windows, etc. */}
                 <></>
