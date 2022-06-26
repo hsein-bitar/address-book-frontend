@@ -5,6 +5,9 @@ import mapStyles from '../assets/mapStyles'
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
 
+import locationPin from '../assets/map-pin-svgrepo-com.svg'
+
+
 export const MapDisplay = ({ passed_contacts, center, setCenter, currentLocation, setCurrentLocation }: any) => {
 
 
@@ -43,7 +46,6 @@ export const MapDisplay = ({ passed_contacts, center, setCenter, currentLocation
                         onClick={() => setCenter({ lat: currentLocation[0], lng: currentLocation[1] })}
                         key={currentLocation[0]}
                         position={{ lat: currentLocation[0], lng: currentLocation[1] }}
-                    // TODO give this marker a special icon
                     />}
                     {passed_contacts.map((contact: any) => {
                         console.log(contact);
@@ -53,10 +55,6 @@ export const MapDisplay = ({ passed_contacts, center, setCenter, currentLocation
                             title={contact.first_name}
                             key={`marker${contact._id}`}
                             position={{ lat: contact.location.coordinates[0], lng: contact.location.coordinates[1] }}
-                        // icon={{
-                        //     url: `/skateboarding.svg`,
-                        //     scaledSize: new window.google.maps.Size(25, 25)
-                        // }}
                         />)
                     })}
                 </>

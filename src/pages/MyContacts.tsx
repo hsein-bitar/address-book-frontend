@@ -7,6 +7,9 @@ import Message from '../components/Message'
 // icons
 import { RiDeleteBin2Line, RiEditLine } from "react-icons/ri";
 
+// color hash to give each relation its color
+import ColorHash from 'color-hash';
+
 // zustand state store
 import useStore from '../Store';
 
@@ -16,6 +19,7 @@ import { MapDisplay } from '../components/MapDisplay';
 
 
 const MyContacts = () => {
+    let colorHash = new ColorHash();
     let navigate = useNavigate();
     let [message, setMessage] = useState({ message: "", theme: 0 });
     // zustand state store
@@ -55,7 +59,8 @@ const MyContacts = () => {
         setCurrentEmail('')
         setCurrentRelation('Other')
         setCustomRelation('')
-        setCurrentLocation([])
+        setCurrentLocation([]);
+        setShowForm(false)
     }
     const addContact = async () => {
         try {
@@ -75,7 +80,7 @@ const MyContacts = () => {
             if (currentContactID) { data["target_id"] = String(currentContactID) }
             console.log(data);
             let response = await fetch(uri, {
-                method: 'put',
+                method: (currentContactID ? "put" : "post"),
                 headers: new Headers({
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -217,9 +222,6 @@ const MyContacts = () => {
             return navigate("/login");
         }
         populateContacts()
-        // setInterval(() => {
-        //     populateContacts()
-        // }, 4000)
     }, [])
 
 
@@ -236,9 +238,9 @@ const MyContacts = () => {
                     <input type="email" name="email" id="email" placeholder="Please enter contact email" value={currentEmail} onChange={(e) => setCurrentEmail(e.target.value)} />
                     <div className="horizontal">
                         <input type="tel" name="phone" id="phone" placeholder="Please enter contact phone" value={currentPhone} onChange={(e) => setCurrentPhone(e.target.value)} />
-                        <select name="category" id="category" onChange={(e) => setCurrentRelation(e.target.value)}>
+                        <select name="category" id="category" defaultValue={currentRelation} onChange={(e) => setCurrentRelation(e.target.value)}>
                             {/* <option>Other</option> */}
-                            {[...categoryList].map((category: any) => <option selected={category === currentRelation}>{category}</option>)}
+                            {[...categoryList].map((category: any) => <option>{category}</option>)}
                         </select>
                     </div>
                     {(currentRelation === "Other") && <input type="text" name="other-category" id="other-category" placeholder="Please enter your contact's relation" value={customRelation || ''} onChange={(e) => setCustomRelation(e.target.value)} />}
@@ -247,7 +249,7 @@ const MyContacts = () => {
                     <label className={formReady ? "active" : ""}>{formReady ? "contact ready to save" : "form still missing some fields"}</label>
                     <div className="horizontal">
                         <button type="button" disabled={!formReady} onClick={() => { addContact() }}> Save Contact</button>
-                        <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
+                        <button type="button" onClick={() => resetFormFieldsState()}>Cancel</button>
                     </div>
                 </form>}
                 {!showForm &&
@@ -265,13 +267,16 @@ const MyContacts = () => {
                         <div className="gallery">
                             {displayedContacts.map((contact: any) => (
                                 <>
-                                    <div key={contact._id} className="item">
+                                    <div key={contact._id} className="item" style={{ color: colorHash.hex(contact.relation), borderColor: colorHash.hex(contact.relation) }}>
                                         <div className="icons-wrapper">
                                             {<RiDeleteBin2Line onClick={() => deleteContact(contact._id)} />}
                                             {<RiEditLine onClick={() => editContact(contact)} />}
                                         </div>
                                         <h3 onClick={() => setCenter({ lat: contact.location.coordinates[0], lng: contact.location.coordinates[1] })} className="contact-name">
                                             {contact.first_name}
+                                            <br />
+                                            {contact.last_name}
+
                                         </h3>
                                         <div className="contact-details">
                                             <p>{contact.relation}</p>
