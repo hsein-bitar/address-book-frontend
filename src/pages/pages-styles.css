@@ -299,7 +299,7 @@ form input {
     cursor: pointer;
 }
 
-button {
+form button {
     align-self: flex-end;
     min-width: 150px;
 }
