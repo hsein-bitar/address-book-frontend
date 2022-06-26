@@ -4,8 +4,9 @@ import './index.css';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 
-// styling react-icons globally
+// used to style react-icons globally
 import { IconContext } from "react-icons";
+
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

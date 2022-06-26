@@ -1,7 +1,8 @@
-import React from 'react';
 import create, { StateCreator } from 'zustand'
 import { persist, PersistOptions } from "zustand/middleware"
 
+
+// types for typescript to stop complaining :)
 type State = {
     userToken: string;
     setUserToken: Function
@@ -23,7 +24,6 @@ const useStore = create<State>(
         { name: 'addressbook' }
     )
 )
-
 
 export default useStore;
 

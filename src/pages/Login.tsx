@@ -13,18 +13,15 @@ const Login = () => {
     let navigate = useNavigate();
     let [message, setMessage] = useState({ message: "", theme: 0 });
 
-
     // zustand state store
     const userToken = useStore(state => state.userToken)
     const setUserToken = useStore(state => state.setUserToken)
-
 
     useEffect(() => {
         if (userToken) {
             return navigate("/allcontacts");
         }
     }, [])
-
 
     const login = async () => {
         try {

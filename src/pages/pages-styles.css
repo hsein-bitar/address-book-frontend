@@ -165,7 +165,8 @@ form input {
     font-size: 20px;
     line-height: 2rem;
     text-decoration: none;
-    padding: 20px;
+    padding: 15px;
+    padding-bottom: 5px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -180,6 +181,7 @@ form input {
     border-radius: 15px;
     border: 1px solid var(--dark);
     position: relative;
+    overflow: hidden;
 }
 
 .gallery>.item:hover {

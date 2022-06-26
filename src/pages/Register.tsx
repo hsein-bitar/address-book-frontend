@@ -7,6 +7,8 @@ import Message from '../components/Message';
 // zustand state store
 import useStore from '../Store';
 
+
+
 const Register: FC = (): ReactElement => {
     let navigate = useNavigate();
     let [message, setMessage] = useState({ message: "", theme: 0 });
@@ -15,13 +17,11 @@ const Register: FC = (): ReactElement => {
     const userToken = useStore(state => state.userToken)
     const setUserToken = useStore(state => state.setUserToken)
 
-
     useEffect(() => {
         if (userToken) {
             return navigate("/allcontacts");
         }
     }, [])
-
 
     const register = async () => {
         try {
@@ -63,7 +63,6 @@ const Register: FC = (): ReactElement => {
             }, 1500);
             console.log(error);
         }
-
     }
 
     return (

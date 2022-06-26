@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import "./pages-styles.css"
 
 import Message from '../components/Message'
+import ContactCard from '../components/ContactCard';
 
 // icons
 import { RiDeleteBin2Line, RiEditLine } from "react-icons/ri";
@@ -267,25 +268,7 @@ const MyContacts = () => {
                         </div>
                         <div className="gallery">
                             {filterContacts(contacts, search, category).map((contact: any) => (
-                                <>
-                                    <div key={contact._id} className="item" style={{ color: colorHash.hex(contact.relation), borderColor: colorHash.hex(contact.relation) }}>
-                                        <div className="icons-wrapper">
-                                            {<RiDeleteBin2Line onClick={() => deleteContact(contact._id)} />}
-                                            {<RiEditLine onClick={() => editContact(contact)} />}
-                                        </div>
-                                        <h3 onClick={() => setCenter({ lat: contact.location.coordinates[0], lng: contact.location.coordinates[1] })} className="contact-name">
-                                            {contact.first_name}
-                                            <br />
-                                            {contact.last_name}
-
-                                        </h3>
-                                        <div className="contact-details">
-                                            <p>{contact.relation}</p>
-                                            <p>{contact.phone}</p>
-                                            <p>{contact.email}</p>
-                                        </div>
-                                    </div>
-                                </>
+                                <ContactCard contact={contact} deleteContact={deleteContact} editContact={editContact} setCenter={setCenter} />
                             ))}
                         </div>
                     </>}
