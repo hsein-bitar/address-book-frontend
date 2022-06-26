@@ -35,7 +35,7 @@ export const MapDisplay = ({ passed_contacts, center, setCenter, currentLocation
                 center={center}
                 onLoad={onLoad}
                 onUnmount={onUnmount}
-                options={{ styles: mapStyles, disableDefaultUI: true, mapTypeControl: false, zoomControl: true, zoom: 12 }}
+                options={{ styles: mapStyles, disableDefaultUI: true, zoomControl: true, zoom: 12 }}
                 onClick={(e) => {
                     // passed down function to setCurrentAddress of contact being edited or created
                     setCurrentLocation([e.latLng?.lat(), e.latLng?.lng()])

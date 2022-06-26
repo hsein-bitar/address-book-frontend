@@ -70,7 +70,7 @@ const Register: FC = (): ReactElement => {
         <>
             <div className="container">
                 <Message {...message} />
-                <form id="register-form" name="register-form" action="" noValidate>
+                <form id="register-form" name="register-form" action="" >
                     <label htmlFor="first-name">Enter your first name:</label>
                     <input type="text" id="register-first-name" required />
                     <label htmlFor="last-name">Enter your last name:</label>

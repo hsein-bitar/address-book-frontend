@@ -71,7 +71,7 @@ const Login = () => {
         <>
             <div className="container">
                 <Message {...message} />
-                <form id="login-form" name="login-form" action="" noValidate>
+                <form id="login-form" name="login-form" action="" >
                     <label htmlFor="email">Enter your email:</label>
                     <input type="email" id="login-email" required />
                     <label htmlFor="password">Password</label>

@@ -26,6 +26,11 @@
   backdrop-filter: blur(3px);
 }
 
+.capital {
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
 a {
   color: var(--dark);
   font-weight: 600;
@@ -69,6 +74,6 @@ a {
   text-decoration: none;
 }
 
-.App-header-right>*:hover {
+.App-header-right>a:hover {
   color: var(--accent);
 }

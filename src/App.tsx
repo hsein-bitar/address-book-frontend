@@ -55,11 +55,8 @@ function App() {
         <div className="App-header-right">
           {!userToken && <NavLink to="/register">Register</NavLink>}
           {!userToken && <NavLink to="/login">Login</NavLink>}
-          {userToken && <NavLink to="/allcontacts">My Contacts</NavLink>}
-          {userToken && <h5>Welcome! <br /> {first_name}</h5>}
-          {/* {!userToken && <NavLink className={`${location === 'register' ? 'active' : ''}`} to="/register">Register</NavLink>}
-          {!userToken && <NavLink className={`${location === 'login' ? 'active' : ''}`} to="/login">Login</NavLink>}
-          {userToken && <NavLink className={`${location === 'create' ? 'active' : ''}`} to="/allcontacts">My Contacts</NavLink>} */}
+          {/* {userToken && <NavLink to="/allcontacts">My Contacts</NavLink>} */}
+          {userToken && <h5>Welcome to your contacts dashboard! <span className="capital">{first_name} </span> </h5>}
           <img src={user_icon} onClick={() => logout()} className={`user-icon ${userToken ? 'user-active' : ''}`} alt="user-icon" />
         </div>
       </header>
