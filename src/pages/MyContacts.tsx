@@ -4,30 +4,24 @@ import "./pages-styles.css"
 
 import Message from '../components/Message'
 import ContactCard from '../components/ContactCard';
-
-// icons
-import { RiDeleteBin2Line, RiEditLine } from "react-icons/ri";
-
-// color hash to give each relation its color
-import ColorHash from 'color-hash';
+import AddContactForm from '../components/AddContactForm';
 
 // zustand state store
 import useStore from '../Store';
-
 
 // map component
 import { MapDisplay } from '../components/MapDisplay';
 
 
 const MyContacts = () => {
-    let colorHash = new ColorHash();
     let navigate = useNavigate();
     let [message, setMessage] = useState({ message: "", theme: 0 });
+
     // zustand state store
     const userToken = useStore(state => state.userToken)
     const setUserToken = useStore(state => state.setUserToken)
 
-    // local contacts state
+    // local contacts list and filters state
     let [contacts, setContacts]: [any, Function] = useState([]);
     let [search, setSearch] = useState('');
     let [category, setCategory] = useState('Any');
@@ -39,9 +33,8 @@ const MyContacts = () => {
         lng: 35.517789903298635
     })
 
-    // current contact and form fields state
     let [currentContactID, setCurrentContactID] = useState(''); // used in case a contact is being edited
-
+    // current contact and form fields state
     const [currentFirstName, setCurrentFirstName] = useState('');
     const [currentLastName, setCurrentLastName] = useState('');
     const [currentPhone, setCurrentPhone] = useState('');
@@ -50,7 +43,6 @@ const MyContacts = () => {
     const [customRelation, setCustomRelation] = useState('');
     const [currentLocation, setCurrentLocation] = useState([]);
     let formReady = (currentFirstName && currentLastName && currentPhone && currentEmail && (currentRelation || customRelation) && currentLocation);
-
 
     const resetFormFieldsState = () => {
         setCurrentContactID('')
@@ -63,6 +55,19 @@ const MyContacts = () => {
         setCurrentLocation([]);
         setShowForm(false)
     }
+    const editContact = (contact: any) => {
+        setCurrentContactID(contact._id)
+        console.log("editing id:", contact._id);
+        setCurrentFirstName(contact.first_name)
+        setCurrentLastName(contact.last_name)
+        setCurrentPhone(contact.phone)
+        setCurrentEmail(contact.email)
+        setCurrentRelation(contact.relation)
+        setCustomRelation('')
+        setCurrentLocation(contact.location.coordinates)
+        setShowForm(true);
+    }
+
     const addContact = async () => {
         try {
             let uri = (currentContactID ? "http://localhost:4000/api/contact/updatecontact" : "http://localhost:4000/api/contact/addcontact");
@@ -72,7 +77,6 @@ const MyContacts = () => {
                 phone: currentPhone,
                 email: currentEmail,
                 relation: (currentRelation !== 'Other') ? currentRelation : customRelation,
-                // relation: currentRelation,
                 location: {
                     type: "Point",
                     coordinates: currentLocation
@@ -157,7 +161,7 @@ const MyContacts = () => {
     }
 
     const deleteContact = async (contact_id: string) => {
-        try {// remove from database
+        try {
             let response = await fetch('http://localhost:4000/api/contact/deletecontact', {
                 method: 'delete',
                 headers: new Headers({
@@ -191,18 +195,8 @@ const MyContacts = () => {
             }, 1500);
         }
     }
-    const editContact = (contact: any) => {
-        setCurrentContactID(contact._id)
-        console.log("editing id:", contact._id);
-        setCurrentFirstName(contact.first_name)
-        setCurrentLastName(contact.last_name)
-        setCurrentPhone(contact.phone)
-        setCurrentEmail(contact.email)
-        setCurrentRelation(contact.relation)
-        setCustomRelation('')
-        setCurrentLocation(contact.location.coordinates)
-        setShowForm(true);
-    }
+
+
 
     // render filtered contacts to DOM function
     let filterContacts = (contacts: [], search: string, category: string) => {
@@ -231,29 +225,11 @@ const MyContacts = () => {
             <MapDisplay passed_contacts={showForm ? [] : filterContacts(contacts, search, category)} center={center} setCenter={setCenter} currentLocation={currentLocation} setCurrentLocation={setCurrentLocation} />
             <Message {...message} />
             <div className="contacts-container">
+                {/* add contact form */}
                 {showForm &&
-                    <form className="add-contact-form" >
-                        <label htmlFor="first-name">First Name</label>
-                        <input type="text" name="first-name" id="first-name" placeholder="Please enter contact first-name" value={currentFirstName} onChange={(e) => setCurrentFirstName(e.target.value)} />
-                        <label htmlFor="last-name">Last Name</label>
-                        <input type="text" name="last-name" id="last-name" placeholder="Please enter contact last-name" value={currentLastName} onChange={(e) => setCurrentLastName(e.target.value)} />
-                        <input type="email" name="email" id="email" placeholder="Please enter contact email" value={currentEmail} onChange={(e) => setCurrentEmail(e.target.value)} />
-                        <div className="horizontal">
-                            <input type="tel" name="phone" id="phone" placeholder="Please enter contact phone" value={currentPhone} onChange={(e) => setCurrentPhone(e.target.value)} pattern="[0-9]+" />
-                            <select name="category" id="category" defaultValue={currentRelation} onChange={(e) => setCurrentRelation(e.target.value)}>
-                                <option>Other</option>
-                                {[...categoryList].map((category: any) => <option>{category}</option>)}
-                            </select>
-                        </div>
-                        {(currentRelation === "Other") && <input type="text" name="other-category" id="other-category" placeholder="Please enter your contact's relation" value={customRelation || ''} onChange={(e) => setCustomRelation(e.target.value)} />}
+                    <AddContactForm currentFirstName={currentFirstName} setCurrentFirstName={setCurrentFirstName} currentLastName={currentLastName} setCurrentLastName={setCurrentLastName} currentEmail={currentEmail} setCurrentEmail={setCurrentEmail} currentPhone={currentPhone} setCurrentPhone={setCurrentPhone} currentRelation={currentRelation} setCurrentRelation={setCurrentRelation} categoryList={categoryList} customRelation={customRelation} setCustomRelation={setCustomRelation} currentLocation={currentLocation} formReady={formReady} addContact={addContact} resetFormFieldsState={resetFormFieldsState} />}
 
-                        <label className={currentLocation[0] ? "active" : ""}>{currentLocation[0] ? "location ready, click on map to change" : "Click on map to choose contact's address"}</label>
-                        <label className={formReady ? "active" : ""}>{formReady ? "contact ready to save" : "form still missing some fields"}</label>
-                        <div className="horizontal">
-                            <button type="button" disabled={!formReady} onClick={() => { addContact() }}> Save Contact</button>
-                            <button type="button" onClick={() => resetFormFieldsState()}>Cancel</button>
-                        </div>
-                    </form>}
+                {/* search form with all contacts cards */}
                 {!showForm &&
                     <>
                         <div className="filters">
