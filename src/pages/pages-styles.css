@@ -62,18 +62,39 @@
     margin-bottom: 16px;
 }
 
+.horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+
+.horizontal select {
+    min-width: 50%;
+}
+
+.horizontal * {
+    min-width: 200px;
+    flex: 1;
+    padding: 0 20px;
+    height: 2.5rem;
+    border-radius: 15px;
+}
+
 .search-add {
     display: flex;
     gap: 16px;
 }
 
-.search-add button {
+.search-add button,
+.horizontal button {
     white-space: nowrap;
-    font-weight: 900;
+    font-weight: 800;
     cursor: pointer;
 }
 
-.search-add button:hover {
+.search-add button:hover,
+.horizontal button:hover {
     background-color: var(--accent);
     color: var(--white);
 }

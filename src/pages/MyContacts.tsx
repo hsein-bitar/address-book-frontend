@@ -28,13 +28,86 @@ const MyContacts = () => {
     let [category, setCategory] = useState('Any');
     let [categoryList, setCategoryList] = useState(new Set());
     let [showForm, setShowForm] = useState(false)
-    // let [currentContact, setCurrentContact] = useState([]);
 
     const [center, setCenter] = useState({
         lat: 33.88411310195422,
         lng: 35.517789903298635
     })
 
+    // current contact and form fields state
+    let [currentContactID, setCurrentContactID] = useState(''); // used in case a contact is being edited
+
+    const [currentFirstName, setCurrentFirstName] = useState('');
+    const [currentLastName, setCurrentLastName] = useState('');
+    const [currentPhone, setCurrentPhone] = useState('');
+    const [currentEmail, setCurrentEmail] = useState('');
+    const [currentRelation, setCurrentRelation] = useState('Other');
+    const [customRelation, setCustomRelation] = useState('');
+    const [currentLocation, setCurrentLocation] = useState([]);
+    let formReady = (currentFirstName && currentLastName && currentPhone && currentEmail && (currentRelation || customRelation) && currentLocation);
+
+
+    const resetFormFieldsState = () => {
+        setCurrentContactID('')
+        setCurrentFirstName('')
+        setCurrentLastName('')
+        setCurrentPhone('')
+        setCurrentEmail('')
+        setCurrentRelation('Other')
+        setCustomRelation('')
+        setCurrentLocation([])
+    }
+    const addContact = async () => {
+        try {
+            let uri = (currentContactID ? "http://localhost:4000/api/contact/updatecontact" : "http://localhost:4000/api/contact/addcontact");
+            let data: any = {
+                first_name: currentFirstName,
+                last_name: currentLastName,
+                phone: currentPhone,
+                email: currentEmail,
+                // relation: (currentRelation !== 'Other') ? currentRelation : customRelation,
+                relation: currentRelation,
+                location: {
+                    type: "Point",
+                    coordinates: currentLocation
+                }
+            }
+            if (currentContactID) { data["target_id"] = String(currentContactID) }
+            console.log(data);
+            let response = await fetch(uri, {
+                method: 'put',
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'x-auth-token': userToken
+                }),
+                body: JSON.stringify(data)
+            })
+            let theme = response.status === 200 ? 0 : 1;
+            let result = await response.json();
+            console.log(result);
+            if (response.status === 200) {
+                setMessage({ message: 'Contact saved', theme })
+                setTimeout(() => {
+                    setMessage({ message: "", theme: 0 })
+                    setShowForm(false)
+                    resetFormFieldsState()
+                    populateContacts()
+                }, 1500);
+            } else {
+                setMessage({ message: 'Invalid Credentials', theme: 1 })
+                setTimeout(() => {
+                    setMessage({ message: "", theme: 0 })
+                }, 1500);
+            }
+        } catch (error) {
+            setMessage({ message: "Error Occured", theme: 1 })
+            setTimeout(() => {
+                setMessage({ message: "", theme: 0 })
+            }, 1500);
+            console.log(error);
+        }
+    }
 
     const populateContacts = async () => {
         try {
@@ -112,9 +185,17 @@ const MyContacts = () => {
             }, 1500);
         }
     }
-    const editContact = (contact_id: string) => {
+    const editContact = (contact: any) => {
+        setCurrentContactID(contact._id)
+        console.log("editing id:", contact._id);
+        setCurrentFirstName(contact.first_name)
+        setCurrentLastName(contact.last_name)
+        setCurrentPhone(contact.phone)
+        setCurrentEmail(contact.email)
+        setCurrentRelation(contact.relation)
+        setCustomRelation('')
+        setCurrentLocation(contact.location.coordinates)
         setShowForm(true);
-        console.log("editing id:", contact_id);
     }
 
     // render filtered contacts to DOM function
@@ -144,21 +225,31 @@ const MyContacts = () => {
 
     return (
         <>
-            <MapDisplay passed_contacts={displayedContacts} center={center} setCenter={setCenter} />
+            <MapDisplay passed_contacts={showForm ? [] : displayedContacts} center={center} setCenter={setCenter} currentLocation={currentLocation} setCurrentLocation={setCurrentLocation} />
             <Message {...message} />
             <div className="contacts-container">
-                <form className="add-contact-form" noValidate>
-
-                    <input type="text" name="first-name" id="first-name" placeholder="Please enter your first-name" onChange={(e) => setSearch(e.target.value)} />
-                    <div className="search-add">
-                        <select name="category" id="category" onChange={(e) => setCategory(e.target.value)}>
-                            <option>Any</option>
-                            {[...categoryList].map((category: any) => <option>{category}</option>)}
+                {showForm && <form className="add-contact-form" noValidate>
+                    <label htmlFor="first-name">First Name</label>
+                    <input type="text" name="first-name" id="first-name" placeholder="Please enter contact first-name" value={currentFirstName} onChange={(e) => setCurrentFirstName(e.target.value)} />
+                    <label htmlFor="last-name">Last Name</label>
+                    <input type="text" name="last-name" id="last-name" placeholder="Please enter contact last-name" value={currentLastName} onChange={(e) => setCurrentLastName(e.target.value)} />
+                    <input type="email" name="email" id="email" placeholder="Please enter contact email" value={currentEmail} onChange={(e) => setCurrentEmail(e.target.value)} />
+                    <div className="horizontal">
+                        <input type="tel" name="phone" id="phone" placeholder="Please enter contact phone" value={currentPhone} onChange={(e) => setCurrentPhone(e.target.value)} />
+                        <select name="category" id="category" onChange={(e) => setCurrentRelation(e.target.value)}>
+                            {/* <option>Other</option> */}
+                            {[...categoryList].map((category: any) => <option selected={category === currentRelation}>{category}</option>)}
                         </select>
-                        <button type="button" onClick={() => setShowForm(true)}> Save Contact</button>
                     </div>
+                    {(currentRelation === "Other") && <input type="text" name="other-category" id="other-category" placeholder="Please enter your contact's relation" value={customRelation || ''} onChange={(e) => setCustomRelation(e.target.value)} />}
 
-                </form>
+                    <label className={currentLocation[0] ? "active" : ""}>{currentLocation[0] ? "address location ready" : "Click on map to choose contact's address"}</label>
+                    <label className={formReady ? "active" : ""}>{formReady ? "contact ready to save" : "form still missing some fields"}</label>
+                    <div className="horizontal">
+                        <button type="button" disabled={!formReady} onClick={() => { addContact() }}> Save Contact</button>
+                        <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
+                    </div>
+                </form>}
                 {!showForm &&
                     <>
                         <div className="filters">
@@ -177,7 +268,7 @@ const MyContacts = () => {
                                     <div key={contact._id} className="item">
                                         <div className="icons-wrapper">
                                             {<RiDeleteBin2Line onClick={() => deleteContact(contact._id)} />}
-                                            {<RiEditLine onClick={() => editContact(contact._id)} />}
+                                            {<RiEditLine onClick={() => editContact(contact)} />}
                                         </div>
                                         <h3 onClick={() => setCenter({ lat: contact.location.coordinates[0], lng: contact.location.coordinates[1] })} className="contact-name">
                                             {contact.first_name}

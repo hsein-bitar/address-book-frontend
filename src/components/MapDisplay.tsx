@@ -5,7 +5,7 @@ import mapStyles from '../assets/mapStyles'
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
 
-export const MapDisplay = ({ passed_contacts, center, setCenter }: any) => {
+export const MapDisplay = ({ passed_contacts, center, setCenter, currentLocation, setCurrentLocation }: any) => {
 
 
     const { isLoaded } = useJsApiLoader({
@@ -34,10 +34,17 @@ export const MapDisplay = ({ passed_contacts, center, setCenter }: any) => {
                 onUnmount={onUnmount}
                 options={{ styles: mapStyles, disableDefaultUI: true, mapTypeControl: false, zoomControl: true, zoom: 12 }}
                 onClick={(e) => {
-                    console.log(e.latLng?.lat(), e.latLng?.lng())
+                    // passed down function to setCurrentAddress of contact being edited or created
+                    setCurrentLocation([e.latLng?.lat(), e.latLng?.lng()])
                 }}
             >
                 <>
+                    {currentLocation[0] && <Marker
+                        onClick={() => setCenter({ lat: currentLocation[0], lng: currentLocation[1] })}
+                        key={currentLocation[0]}
+                        position={{ lat: currentLocation[0], lng: currentLocation[1] }}
+                    // TODO give this marker a special icon
+                    />}
                     {passed_contacts.map((contact: any) => {
                         console.log(contact);
                         return (<Marker
