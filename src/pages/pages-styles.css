@@ -88,6 +88,9 @@
 
 .search-add button,
 .horizontal button {
+    border: 1px solid var(--accent);
+    background-color: var(--white);
+    color: var(--dark);
     white-space: nowrap;
     font-weight: 800;
     cursor: pointer;
@@ -99,8 +102,19 @@
     color: var(--white);
 }
 
+button:disabled,
+button:disabled:hover {
+    background-color: unset;
+    color: unset;
+    color: gray;
+}
+
 .search-add select {
     width: 100%;
+}
+
+form input {
+    border: none;
 }
 
 .search-add * {
@@ -110,6 +124,7 @@
 }
 
 .filters>input {
+    border: none;
     padding: 0 20px;
     height: 2.5rem;
     border-radius: 15px;
@@ -239,3 +254,54 @@
     /* border: 1px solid red; */
     width: 100%;
 }
+
+/* start register, login forms styling */
+#login-form *,
+#register-form * {
+    border: none;
+    padding: 0 20px;
+    height: 2.5rem;
+    border-radius: 15px;
+}
+
+
+#login-form,
+#register-form {
+    width: 50%;
+    max-width: 500px;
+    min-width: 300px;
+    position: relative;
+    margin: auto;
+    margin-top: calc(0.5 * (100vh - var(--nav-bar-height)));
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+#login-form input,
+#register-form input {
+    border: 1px solid var(--accent) !important;
+    font-size: 1.3rem;
+}
+
+#login-form label,
+#register-form label {
+    padding-left: 0;
+    height: 10px !important;
+    text-align: left;
+}
+
+#login-form button:hover,
+#register-form button:hover {
+    background-color: var(--accent);
+    color: var(--white);
+    cursor: pointer;
+}
+
+button {
+    align-self: flex-end;
+    min-width: 150px;
+}
+
+/* end register, login forms styling */

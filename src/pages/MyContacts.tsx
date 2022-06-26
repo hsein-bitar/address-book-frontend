@@ -215,7 +215,7 @@ const MyContacts = () => {
         }
         return displayed_contacts;
     }
-    let displayedContacts = filterContacts(contacts, search, category)
+    // let displayedContacts = filterContacts(contacts, search, category)
 
     useEffect(() => {
         if (!userToken) {
@@ -227,7 +227,7 @@ const MyContacts = () => {
 
     return (
         <>
-            <MapDisplay passed_contacts={showForm ? [] : displayedContacts} center={center} setCenter={setCenter} currentLocation={currentLocation} setCurrentLocation={setCurrentLocation} />
+            <MapDisplay passed_contacts={showForm ? [] : filterContacts(contacts, search, category)} center={center} setCenter={setCenter} currentLocation={currentLocation} setCurrentLocation={setCurrentLocation} />
             <Message {...message} />
             <div className="contacts-container">
                 {showForm && <form className="add-contact-form" noValidate>
@@ -237,7 +237,7 @@ const MyContacts = () => {
                     <input type="text" name="last-name" id="last-name" placeholder="Please enter contact last-name" value={currentLastName} onChange={(e) => setCurrentLastName(e.target.value)} />
                     <input type="email" name="email" id="email" placeholder="Please enter contact email" value={currentEmail} onChange={(e) => setCurrentEmail(e.target.value)} />
                     <div className="horizontal">
-                        <input type="tel" name="phone" id="phone" placeholder="Please enter contact phone" value={currentPhone} onChange={(e) => setCurrentPhone(e.target.value)} />
+                        <input type="tel" name="phone" id="phone" placeholder="Please enter contact phone" value={currentPhone} onChange={(e) => setCurrentPhone(e.target.value)} pattern="[0-9]+" />
                         <select name="category" id="category" defaultValue={currentRelation} onChange={(e) => setCurrentRelation(e.target.value)}>
                             {/* <option>Other</option> */}
                             {[...categoryList].map((category: any) => <option>{category}</option>)}
@@ -265,7 +265,7 @@ const MyContacts = () => {
                             <input type="text" name="search" id="search" placeholder="Full text search" onChange={(e) => setSearch(e.target.value)} />
                         </div>
                         <div className="gallery">
-                            {displayedContacts.map((contact: any) => (
+                            {filterContacts(contacts, search, category).map((contact: any) => (
                                 <>
                                     <div key={contact._id} className="item" style={{ color: colorHash.hex(contact.relation), borderColor: colorHash.hex(contact.relation) }}>
                                         <div className="icons-wrapper">

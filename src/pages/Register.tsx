@@ -79,9 +79,7 @@ const Register: FC = (): ReactElement => {
                     <input type="email" id="register-email" required />
                     <label htmlFor="password">Password</label>
                     <input type="password" id="register-password" name="password" required />
-                    <div className='button'>
-                        <button onClick={() => register()} id="register-submit" className="primary" type="button"> Register</button>
-                    </div>
+                    <button onClick={() => register()} id="register-submit" className="primary" type="button"> Register</button>
                 </form>
             </div>
         </>

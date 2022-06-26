@@ -76,9 +76,7 @@ const Login = () => {
                     <input type="email" id="login-email" required />
                     <label htmlFor="password">Password</label>
                     <input type="password" id="login-password" name="password" required />
-                    <div className='button'>
-                        <button onClick={() => login()} id="login-submit" className="primary" type="button"> Login</button>
-                    </div>
+                    <button onClick={() => login()} id="login-submit" className="primary" type="button"> Login</button>
                 </form>
             </div>
         </>
