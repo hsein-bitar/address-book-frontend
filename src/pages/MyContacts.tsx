@@ -1,37 +1,33 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import "./pages-styles.css"
-
 // import components
 import Message from '../components/Message'
 import ContactCard from '../components/ContactCard';
 import AddContactForm from '../components/AddContactForm';
-
 // zustand state store
 import useStore from '../Store';
-
 // map component
 import { MapDisplay } from '../components/MapDisplay';
+
 
 const MyContacts = () => {
     let navigate = useNavigate();
     let [message, setMessage] = useState({ message: "", theme: 0 });
-
     // zustand state store
     const userToken = useStore(state => state.userToken)
     const setUserToken = useStore(state => state.setUserToken)
-
+    // used to center map when you click on a contact
+    const [center, setCenter] = useState({
+        lat: 33.88411310195422,
+        lng: 35.517789903298635
+    })
     // local contacts list and filters state
     let [contacts, setContacts]: [any, Function] = useState([]);
     let [search, setSearch] = useState('');
     let [category, setCategory] = useState('Any');
     let [categoryList, setCategoryList] = useState(new Set());
     let [showForm, setShowForm] = useState(false)
-
-    const [center, setCenter] = useState({
-        lat: 33.88411310195422,
-        lng: 35.517789903298635
-    })
 
     let [currentContactID, setCurrentContactID] = useState(''); // used in case a contact is being edited
     // current contact and form fields state
@@ -73,8 +69,7 @@ const MyContacts = () => {
             let response = await fetch('http://localhost:4000/api/contact/listcontacts', {
                 method: 'get',
                 headers: new Headers({
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
+                    'Content-Type': 'application/json', 'Accept': 'application/json',
                     'x-auth-token': userToken
                 }),
             })
@@ -113,11 +108,9 @@ const MyContacts = () => {
     // render filtered contacts to DOM function
     let filterContacts = (contacts: [], search: string, category: string) => {
         let displayed_contacts: any = contacts;
-
         if (category && category !== 'Any') {
             displayed_contacts = displayed_contacts.filter((contact: any) => contact.relation === category);
         }
-
         if (search) {
             const regex = new RegExp(search, 'gi');
             displayed_contacts = displayed_contacts.filter((contact: any) => contact.first_name.match(regex)
@@ -135,6 +128,9 @@ const MyContacts = () => {
         populateContacts()
     }, [])
 
+    let passToAddContactForm = {
+        userToken, setMessage, setShowForm, populateContacts, currentContactID, currentFirstName, setCurrentFirstName, currentLastName, setCurrentLastName, currentEmail, setCurrentEmail, currentPhone, setCurrentPhone, currentRelation, setCurrentRelation, categoryList, customRelation, setCustomRelation, currentLocation, formReady, resetFormFieldsState
+    }
 
     return (
         <>
@@ -143,13 +139,7 @@ const MyContacts = () => {
             <div className="contacts-container">
                 {/* add contact form */}
                 {showForm &&
-                    <AddContactForm userToken={userToken}
-                        setMessage={setMessage} setShowForm={setShowForm} populateContacts={populateContacts} currentContactID={currentContactID}
-                        currentFirstName={currentFirstName} setCurrentFirstName={setCurrentFirstName} currentLastName={currentLastName}
-                        setCurrentLastName={setCurrentLastName} currentEmail={currentEmail} setCurrentEmail={setCurrentEmail} currentPhone={currentPhone}
-                        setCurrentPhone={setCurrentPhone} currentRelation={currentRelation} setCurrentRelation={setCurrentRelation} categoryList={categoryList}
-                        customRelation={customRelation} setCustomRelation={setCustomRelation} currentLocation={currentLocation} formReady={formReady} resetFormFieldsState={resetFormFieldsState} />}
-
+                    <AddContactForm {...passToAddContactForm} />}
                 {/* search form with all contacts cards */}
                 {!showForm &&
                     <>

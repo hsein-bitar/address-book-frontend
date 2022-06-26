@@ -8,7 +8,7 @@ import { RiDeleteBin2Line, RiEditLine } from "react-icons/ri";
 import ColorHash from 'color-hash';
 
 
-function ContactCard({ populateContacts, userToken, setMessage, contact, editContact, setCenter }: any) {
+function ContactCard({ populateContacts, userToken, setMessage, contact, editContact, setCenter }: any): JSX.Element {
 
     const deleteContact = async (contact_id: string) => {
         try {
