@@ -3,11 +3,49 @@ import React from 'react'
 // icons
 import { RiDeleteBin2Line, RiEditLine } from "react-icons/ri";
 
+
 // color hash to give each relation its color
 import ColorHash from 'color-hash';
 
 
-function ContactCard({ contact, deleteContact, editContact, setCenter }: any) {
+function ContactCard({ populateContacts, userToken, setMessage, contact, editContact, setCenter }: any) {
+
+    const deleteContact = async (contact_id: string) => {
+        try {
+            let response = await fetch('http://localhost:4000/api/contact/deletecontact', {
+                method: 'delete',
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'x-auth-token': userToken
+                }),
+                body: JSON.stringify({
+                    target_id: contact_id
+                })
+            })
+            let theme = response.status === 200 ? 0 : 1;
+            // let result = await response.json();
+            if (response.status === 200) {
+                setMessage({ message: 'Deleted contact', theme })
+                setTimeout(() => {
+                    setMessage({ message: "", theme: 0 })
+                }, 1500);
+                populateContacts();
+            } else {
+                setMessage({ message: 'Could not delete', theme: 1 })
+                setTimeout(() => {
+                    setMessage({ message: "", theme: 0 })
+                }, 1500);
+            }
+        } catch (error) {
+            console.log(error);
+            setMessage({ message: 'Error occured', theme: 1 })
+            setTimeout(() => {
+                setMessage({ message: "", theme: 0 })
+            }, 1500);
+        }
+    }
+
     let colorHash = new ColorHash();
     return (
         <div key={contact._id} className="item" style={{ color: colorHash.hex(contact.relation), borderColor: colorHash.hex(contact.relation) }}>

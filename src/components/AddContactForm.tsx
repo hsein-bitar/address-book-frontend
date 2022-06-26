@@ -1,7 +1,60 @@
 import React from 'react'
 
 // please give me your feedback on passing this many props, it does clean the parent component but I feel like this is too much!
-function AddContactForm({ currentFirstName, setCurrentFirstName, currentLastName, setCurrentLastName, currentEmail, setCurrentEmail, currentPhone, setCurrentPhone, currentRelation, setCurrentRelation, categoryList, customRelation, setCustomRelation, currentLocation, formReady, addContact, resetFormFieldsState }: any) {
+function AddContactForm({ userToken, setMessage, setShowForm, populateContacts, currentContactID, currentFirstName, setCurrentFirstName, currentLastName, setCurrentLastName, currentEmail, setCurrentEmail, currentPhone, setCurrentPhone, currentRelation, setCurrentRelation, categoryList, customRelation, setCustomRelation, currentLocation, formReady, resetFormFieldsState }: any) {
+
+
+    const addContact = async () => {
+        try {
+            let uri = (currentContactID ? "http://localhost:4000/api/contact/updatecontact" : "http://localhost:4000/api/contact/addcontact");
+            let data: any = {
+                first_name: currentFirstName,
+                last_name: currentLastName,
+                phone: currentPhone,
+                email: currentEmail,
+                relation: (currentRelation !== 'Other') ? currentRelation : customRelation,
+                location: {
+                    type: "Point",
+                    coordinates: currentLocation
+                }
+            }
+            if (currentContactID) { data["target_id"] = String(currentContactID) }
+            console.log(data);
+            let response = await fetch(uri, {
+                method: (currentContactID ? "put" : "post"),
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'x-auth-token': userToken
+                }),
+                body: JSON.stringify(data)
+            })
+            let theme = response.status === 200 ? 0 : 1;
+            let result = await response.json();
+            console.log(result);
+            if (response.status === 200) {
+                setMessage({ message: 'Contact saved', theme })
+                setTimeout(() => {
+                    setMessage({ message: "", theme: 0 })
+                    setShowForm(false)
+                    resetFormFieldsState()
+                    populateContacts()
+                }, 1500);
+            } else {
+                setMessage({ message: 'Invalid Credentials', theme: 1 })
+                setTimeout(() => {
+                    setMessage({ message: "", theme: 0 })
+                }, 1500);
+            }
+        } catch (error) {
+            setMessage({ message: "Error Occured", theme: 1 })
+            setTimeout(() => {
+                setMessage({ message: "", theme: 0 })
+            }, 1500);
+            console.log(error);
+        }
+    }
+
     return (
         <form className="add-contact-form" >
             <label htmlFor="first-name">First Name</label>

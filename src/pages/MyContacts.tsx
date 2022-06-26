@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import "./pages-styles.css"
 
+// import components
 import Message from '../components/Message'
 import ContactCard from '../components/ContactCard';
 import AddContactForm from '../components/AddContactForm';
@@ -11,7 +12,6 @@ import useStore from '../Store';
 
 // map component
 import { MapDisplay } from '../components/MapDisplay';
-
 
 const MyContacts = () => {
     let navigate = useNavigate();
@@ -68,57 +68,6 @@ const MyContacts = () => {
         setShowForm(true);
     }
 
-    const addContact = async () => {
-        try {
-            let uri = (currentContactID ? "http://localhost:4000/api/contact/updatecontact" : "http://localhost:4000/api/contact/addcontact");
-            let data: any = {
-                first_name: currentFirstName,
-                last_name: currentLastName,
-                phone: currentPhone,
-                email: currentEmail,
-                relation: (currentRelation !== 'Other') ? currentRelation : customRelation,
-                location: {
-                    type: "Point",
-                    coordinates: currentLocation
-                }
-            }
-            if (currentContactID) { data["target_id"] = String(currentContactID) }
-            console.log(data);
-            let response = await fetch(uri, {
-                method: (currentContactID ? "put" : "post"),
-                headers: new Headers({
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'x-auth-token': userToken
-                }),
-                body: JSON.stringify(data)
-            })
-            let theme = response.status === 200 ? 0 : 1;
-            let result = await response.json();
-            console.log(result);
-            if (response.status === 200) {
-                setMessage({ message: 'Contact saved', theme })
-                setTimeout(() => {
-                    setMessage({ message: "", theme: 0 })
-                    setShowForm(false)
-                    resetFormFieldsState()
-                    populateContacts()
-                }, 1500);
-            } else {
-                setMessage({ message: 'Invalid Credentials', theme: 1 })
-                setTimeout(() => {
-                    setMessage({ message: "", theme: 0 })
-                }, 1500);
-            }
-        } catch (error) {
-            setMessage({ message: "Error Occured", theme: 1 })
-            setTimeout(() => {
-                setMessage({ message: "", theme: 0 })
-            }, 1500);
-            console.log(error);
-        }
-    }
-
     const populateContacts = async () => {
         try {
             let response = await fetch('http://localhost:4000/api/contact/listcontacts', {
@@ -160,57 +109,24 @@ const MyContacts = () => {
         }
     }
 
-    const deleteContact = async (contact_id: string) => {
-        try {
-            let response = await fetch('http://localhost:4000/api/contact/deletecontact', {
-                method: 'delete',
-                headers: new Headers({
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'x-auth-token': userToken
-                }),
-                body: JSON.stringify({
-                    target_id: contact_id
-                })
-            })
-            let theme = response.status === 200 ? 0 : 1;
-            // let result = await response.json();
-            if (response.status === 200) {
-                setMessage({ message: 'Deleted contact', theme })
-                setTimeout(() => {
-                    setMessage({ message: "", theme: 0 })
-                }, 1500);
-                populateContacts();
-            } else {
-                setMessage({ message: 'Could not delete', theme: 1 })
-                setTimeout(() => {
-                    setMessage({ message: "", theme: 0 })
-                }, 1500);
-            }
-        } catch (error) {
-            console.log(error);
-            setMessage({ message: 'Error occured', theme: 1 })
-            setTimeout(() => {
-                setMessage({ message: "", theme: 0 })
-            }, 1500);
-        }
-    }
-
-
 
     // render filtered contacts to DOM function
     let filterContacts = (contacts: [], search: string, category: string) => {
         let displayed_contacts: any = contacts;
+
         if (category && category !== 'Any') {
             displayed_contacts = displayed_contacts.filter((contact: any) => contact.relation === category);
         }
+
         if (search) {
             const regex = new RegExp(search, 'gi');
-            displayed_contacts = displayed_contacts.filter((contact: any) => contact.first_name.match(regex) || contact.last_name.match(regex) || contact.email.match(regex) || contact.phone.match(regex));
+            displayed_contacts = displayed_contacts.filter((contact: any) => contact.first_name.match(regex)
+                || contact.last_name.match(regex)
+                || contact.email.match(regex)
+                || contact.phone.match(regex));
         }
         return displayed_contacts;
     }
-    // let displayedContacts = filterContacts(contacts, search, category)
 
     useEffect(() => {
         if (!userToken) {
@@ -222,12 +138,17 @@ const MyContacts = () => {
 
     return (
         <>
-            <MapDisplay passed_contacts={showForm ? [] : filterContacts(contacts, search, category)} center={center} setCenter={setCenter} currentLocation={currentLocation} setCurrentLocation={setCurrentLocation} />
             <Message {...message} />
+            <MapDisplay passed_contacts={showForm ? [] : filterContacts(contacts, search, category)} center={center} setCenter={setCenter} currentLocation={currentLocation} setCurrentLocation={setCurrentLocation} />
             <div className="contacts-container">
                 {/* add contact form */}
                 {showForm &&
-                    <AddContactForm currentFirstName={currentFirstName} setCurrentFirstName={setCurrentFirstName} currentLastName={currentLastName} setCurrentLastName={setCurrentLastName} currentEmail={currentEmail} setCurrentEmail={setCurrentEmail} currentPhone={currentPhone} setCurrentPhone={setCurrentPhone} currentRelation={currentRelation} setCurrentRelation={setCurrentRelation} categoryList={categoryList} customRelation={customRelation} setCustomRelation={setCustomRelation} currentLocation={currentLocation} formReady={formReady} addContact={addContact} resetFormFieldsState={resetFormFieldsState} />}
+                    <AddContactForm userToken={userToken}
+                        setMessage={setMessage} setShowForm={setShowForm} populateContacts={populateContacts} currentContactID={currentContactID}
+                        currentFirstName={currentFirstName} setCurrentFirstName={setCurrentFirstName} currentLastName={currentLastName}
+                        setCurrentLastName={setCurrentLastName} currentEmail={currentEmail} setCurrentEmail={setCurrentEmail} currentPhone={currentPhone}
+                        setCurrentPhone={setCurrentPhone} currentRelation={currentRelation} setCurrentRelation={setCurrentRelation} categoryList={categoryList}
+                        customRelation={customRelation} setCustomRelation={setCustomRelation} currentLocation={currentLocation} formReady={formReady} resetFormFieldsState={resetFormFieldsState} />}
 
                 {/* search form with all contacts cards */}
                 {!showForm &&
@@ -244,7 +165,7 @@ const MyContacts = () => {
                         </div>
                         <div className="gallery">
                             {filterContacts(contacts, search, category).map((contact: any) => (
-                                <ContactCard contact={contact} deleteContact={deleteContact} editContact={editContact} setCenter={setCenter} />
+                                <ContactCard userToken={userToken} populateContacts={populateContacts} setMessage={setMessage} contact={contact} editContact={editContact} setCenter={setCenter} />
                             ))}
                         </div>
                     </>}
