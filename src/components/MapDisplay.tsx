@@ -1,11 +1,8 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React from 'react'
 
 // maps api and styles
 import mapStyles from '../assets/mapStyles'
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
-
-
-import locationPin from '../assets/map-pin-svgrepo-com.svg'
 
 
 export const MapDisplay = ({ passed_contacts, center, setCenter, currentLocation, setCurrentLocation }: any) => {
